@@ -8,6 +8,82 @@
   </head>
   <body>
     <h1>Samesite Tester</h1>
-    <a href="https://gist.github.com/davidtaylorhq/5cea71c6fc3c70f9ef09f932cb69cd5d">Visit gist</a>
+    <table>
+      <tr>
+        <th>Cookie Name</th>
+        <th>Samesite</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>my_samesite_none_cookie</td>
+        <td>None</td>
+        <td id="none-val"></td>
+      </tr>
+      <tr>
+        <td>my_samesite_lax_cookie</td>
+        <td>Lax</td>
+        <td id="lax-val"></td>  
+      </tr>
+      <tr>
+        <td>my_samesite_strict_cookie</td>
+        <td>Strict</td>
+        <td id="strict-val"></td>
+      </tr>
+    </table>
+
+    <p>
+      <button onclick="readCookies()">Read Cookies</button>
+      <button onclick="setCookies(); readCookies();">Set Cookies</button>
+      <button onclick="deleteAllCookies(); readCookies();">Clear Cookies</button>
+    </p>
+
+    <p>
+      <a href="https://gist.github.com/davidtaylorhq/5cea71c6fc3c70f9ef09f932cb69cd5d">Visit another site</a>
+    </p>
+
+    <script>
+      function getCookie(cname) {
+        // https://www.w3schools.com/js/js_cookies.asp
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
+      function deleteAllCookies() {
+        // https://stackoverflow.com/a/179514
+        var cookies = document.cookie.split(";");
+
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            var eqPos = cookie.indexOf("=");
+            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+      }
+
+      function setCookies(){
+        console.log("setting")
+        secure = window.location.protocol === "https:";
+        secureSuffix = secure ? "Secure;" : "";
+        document.cookie = "my_samesite_none_cookie=samesite_none_value;path=/;SameSite=None;"+secureSuffix;
+        document.cookie = "my_samesite_lax_cookie=samesite_lax_value;path=/;SameSite=Lax;"+secureSuffix;
+        document.cookie = "my_samesite_strict_cookie=samesite_strict_value;path=/;SameSite=Strict;"+secureSuffix;
+      }
+      function readCookies(){
+        document.getElementById("none-val").textContent = getCookie("my_samesite_none_cookie") || "(blank)"
+        document.getElementById("lax-val").textContent = getCookie("my_samesite_lax_cookie") || "(blank)"
+        document.getElementById("strict-val").textContent = getCookie("my_samesite_strict_cookie") || "(blank)"
+      }
+      readCookies();
+    </script>
   </body>
 </html>
